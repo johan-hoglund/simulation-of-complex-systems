@@ -6,16 +6,16 @@ import java.util.Map;
 
 public class GameRunner
 {
-	public static int roundsPerGame = 100;
-	public static int populationSize = 20;
+	public static int roundsPerGame = 10;
+	public static int populationSize = 50;
 	public static double mutualCooperationScore = 3;
 	public static double mutualDefectionScore = 1;
 	public static double loseScore = 0;
 	public static double winScore = 5;
 	public static double noise = 0;
 	public static int roundNumber = 0;
-	public static int fps = 1;
-	
+	public static int fps = 1000;
+
 	private ArrayList<Agent> population;
 
 	public HashMap<String, Integer> populationHistogram()
@@ -71,7 +71,7 @@ public class GameRunner
 		Chromosome strategyChromosome = new Chromosome(new GameAction[]{GameAction.DEFECT, GameAction.COOPERATE});
 		strategyChromosome.maxLength = 2;
 		strategyChromosome.minLength = 2;
-		strategyChromosome.mutationRate = 0.1;
+		strategyChromosome.mutationRate = 0.01;
 		strategyChromosome.chromosome = new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE, GameAction.COOPERATE, GameAction.COOPERATE};
 
 		Chromosome overrideChromosome = new Chromosome(new GameAction[]{GameAction.STRATEGY, GameAction.DEFECT, GameAction.COOPERATE});
