@@ -60,7 +60,7 @@ public class Agent implements Comparable<Agent>, Cloneable
 
 	public String genomeString()
 	{
-		return startingMemory.toString() + "." + strategy.toString() + "." + override.toString();
+		return startingMemory.toString() + "\t" + strategy.toString() + "\t" + override.toString();
 	}
 
 	public void giveScore(double score)
