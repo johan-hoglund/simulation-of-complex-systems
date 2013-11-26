@@ -68,11 +68,18 @@ public class Chromosome implements Cloneable
 		return new String(out);
 	}
 
-	public void grow()
+	public void grow(int bits)
 	{
-			GameAction[] newChromosome = new GameAction[chromosome.length * 2];
+			GameAction[] newChromosome = new GameAction[chromosome.length + bits];
 			System.arraycopy(chromosome, 0, newChromosome, 0, chromosome.length);
-			System.arraycopy(chromosome, 0, newChromosome, chromosome.length, chromosome.length);
+			System.arraycopy(chromosome, 0, newChromosome, chromosome.length, bits);
+			chromosome = newChromosome;
+	}
+	
+	public void shrink(int bits)
+	{
+			GameAction[] newChromosome = new GameAction[chromosome.length - bits];
+			System.arraycopy(chromosome, 0, newChromosome, 0, newChromosome.length);
 			chromosome = newChromosome;
 	}
 }
