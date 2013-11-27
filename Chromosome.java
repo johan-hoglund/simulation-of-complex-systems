@@ -3,7 +3,7 @@ public class Chromosome implements Cloneable
 	GameAction[] geneSpace;
 	int maxLength, minLength;
 	public GameAction[] chromosome;
-	double mutationRate = 0.01;
+	double mutationRate;
 
 	public int size()
 	{

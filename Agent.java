@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class Agent implements Comparable<Agent>, Cloneable
+public class Agent implements Cloneable
 {
 	public Chromosome strategy;
 	public Chromosome override;
@@ -11,14 +11,16 @@ public class Agent implements Comparable<Agent>, Cloneable
 	public double startingMemorySizeMutationRate;
 	public double startingMemoryMinSize;
 	public double startingMemoryMaxSize;
+	public int index;
 
 
-	public Agent(double noiseLevel, double sizeMutationRate, double minSize, double maxSize)
+	public Agent(double noiseLevel, double sizeMutationRate, double minSize, double maxSize, int agentIndex)
 	{
 		noise = noiseLevel;
 		startingMemorySizeMutationRate = sizeMutationRate;
 		startingMemoryMinSize = minSize;
 		startingMemoryMaxSize = maxSize;
+		index = agentIndex;
 	}
 
 	public int computeHistoryId(GameAction[] history, int roundNumber, boolean firstPlayerPerspective)
@@ -47,12 +49,9 @@ public class Agent implements Comparable<Agent>, Cloneable
 					id += Math.pow(2, i);
 				}
 			}
-			else
+			else if(startingMemory.chromosome[i] == GameAction.COOPERATE)
 			{
-				if(startingMemory.chromosome[i] == GameAction.COOPERATE)
-				{
-					id += Math.pow(2, i);
-				}
+				id += Math.pow(2, i);
 			}
 		}
 
@@ -147,8 +146,8 @@ public class Agent implements Comparable<Agent>, Cloneable
 
 	public String genomeString()
 	{
-		//return startingMemory.toString() + "\t" + strategy.toString() + "\t" + override.toString();
-		return startingMemory.toString() + "\t" + strategy.toString();
+		return startingMemory.toString() + "\t" + strategy.toString() + "\t" + override.toString();
+		//return startingMemory.toString() + "\t" + strategy.toString();
 	}
 
 	public void giveScore(double score)
@@ -158,14 +157,9 @@ public class Agent implements Comparable<Agent>, Cloneable
 		//System.out.println("Got score " + score + ", total score is now " + totalScore);
 	}
 
-	public int compareTo(Agent other)
-	{
-		return (int) (other.totalScore - totalScore);
-	}
-
 	public Agent clone()
 	{
-		Agent copy = new Agent(noise, startingMemorySizeMutationRate, startingMemoryMinSize, startingMemoryMaxSize);
+		Agent copy = new Agent(noise, startingMemorySizeMutationRate, startingMemoryMinSize, startingMemoryMaxSize, index);
 		copy.strategy = strategy.clone();
 		copy.override = override.clone();
 		copy.startingMemory = startingMemory.clone();
@@ -194,13 +188,6 @@ public class Agent implements Comparable<Agent>, Cloneable
 				startingMemory.shrink(1);
 			}
 		}
-		/*
-		if(Math.random() < 0.01)
-		{
-			strategy.halve();
-			startingMemory.halve();
-		}
-		*/
 
 		return this;
 	}

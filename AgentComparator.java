@@ -4,6 +4,6 @@ public class AgentComparator implements Comparator<Agent>
 {
 	public int compare(Agent a1, Agent a2)
 	{
-		return a1.compareTo(a2);
+		return (int) (a2.totalScore - a1.totalScore);
 	}
 }

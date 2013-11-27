@@ -8,8 +8,8 @@ import java.util.Arrays;
 public class GameRunner
 {
 	// Simulation parameters
-	public static int roundsPerGame = 100;
-	public static int populationSize = 100;
+	public static int roundsPerGame = 50;
+	public static int populationSize = 100; // Must be even!
 	public static int fps = 0;
 	
 	// Scores
@@ -19,19 +19,21 @@ public class GameRunner
 	public static double winScore = 5;
 
 	// Game parameters
-	public static double noise = 0;
+	public static double noise = 0.01;
 	
 	// Strategy parameters
-	public static double strategyMutationRate = 0.05;
+	public static double strategyMutationRate = 0.01;
 	
 	// Starting memory parameters
 	public static int startingMemoryMinSize = 1;
-	public static int startingMemoryMaxSize = 10;
-	public static double startingMemorySizeMutationRate = 0.01;
+	public static int startingMemoryMaxSize = 5;
+	public static double startingMemorySizeMutationRate = 0;
 	public static double startingMemoryMutationRate = 0;
 
 	// Override parameters
-	public static double overrideMutationRate = 0;
+	public static double overrideMutationRate = 0.01;
+
+	public AgentComparator ac;
 
 
 	public static int roundNumber = 0;
@@ -62,7 +64,7 @@ public class GameRunner
 	{
 		GameRunner runner = new GameRunner();
 
-		for(int i = 0; i < 1000; i++)
+		while(true)
 		{
 			runner.renderStats();
 			runner.populationStep();
@@ -81,21 +83,28 @@ public class GameRunner
 
 	public void renderStats()
 	{
-		for (Map.Entry<String, Integer> entry : populationHistogram().entrySet()) {
+		for (Map.Entry<String, Integer> entry : populationHistogram().entrySet())
+		{
+			if(entry.getValue()/(double) populationSize > 0.01)
+			{
 				System.out.println(Integer.toString(roundNumber) + "\t" + entry.getKey() + "\t" + entry.getValue());
+			}
 		}
 	}
 
 	public GameRunner()
 	{
+		ac = new AgentComparator();
 		population = new ArrayList<Agent>(populationSize);
 		Agent a;
 
 		Chromosome strategyChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE, GameAction.DEFECT});
 		strategyChromosome.mutationRate = strategyMutationRate;
-		strategyChromosome.chromosome = new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE};
+		strategyChromosome.chromosome = new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE, GameAction.DEFECT, GameAction.COOPERATE, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.COOPERATE, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.COOPERATE };
 
-		Chromosome overrideChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE});
+		//strategyChromosome.chromosome = new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE};
+		
+		Chromosome overrideChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE, GameAction.DEFECT, GameAction.STRATEGY});
 		overrideChromosome.maxLength = roundsPerGame;
 		overrideChromosome.minLength = roundsPerGame;
 		overrideChromosome.mutationRate = overrideMutationRate;
@@ -106,14 +115,13 @@ public class GameRunner
 		}
 
 		Chromosome startingMemoryChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE});
-		startingMemoryChromosome.maxLength = 2;
-		startingMemoryChromosome.minLength = 2;
 		startingMemoryChromosome.mutationRate = startingMemoryMutationRate;
-		startingMemoryChromosome.chromosome = new GameAction[]{GameAction.COOPERATE};
+		//startingMemoryChromosome.chromosome = new GameAction[]{GameAction.COOPERATE};
+		startingMemoryChromosome.chromosome = new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE, GameAction.COOPERATE, GameAction.COOPERATE };
 
 		for(int i = 0; i < populationSize; i++)
 		{
-			a = new Agent(noise, startingMemorySizeMutationRate, startingMemoryMinSize, startingMemoryMaxSize);
+			a = new Agent(noise, startingMemorySizeMutationRate, startingMemoryMinSize, startingMemoryMaxSize, i);
 			a.strategy = strategyChromosome.clone();
 			a.override = overrideChromosome.clone();
 			a.startingMemory = startingMemoryChromosome.clone();
@@ -129,7 +137,9 @@ public class GameRunner
 		{
 			for(Agent b : population)
 			{
-				if(a != b)
+				// Only play each agent pair once, ie. do not play A vs B AND B vs A.
+				// Also prevent A vs A
+				if(a.index < b.index)
 				{
 					playGame(a, b);
 				}
@@ -140,7 +150,7 @@ public class GameRunner
 	public void populationStep()
 	{
 		evaluatePopulation();
-		Collections.sort(population, new AgentComparator());
+		Collections.sort(population, ac);
 
 		
 		for(int i = 0; i < populationSize; i++)
@@ -149,11 +159,19 @@ public class GameRunner
 		}
 		
 		ArrayList<Agent> nextPopulation = new ArrayList<Agent>(populationSize);
+		Agent template;
 		for(int i = 0; i < populationSize / 2; i++)
 		{
 			//System.out.println("Trasnfering to next population: " + population.get(i).genomeString());
-			nextPopulation.add(population.get(i).clone().mutate());
-			nextPopulation.add(population.get(i).clone().mutate());
+			template = population.get(i);
+			
+			nextPopulation.add(template.clone().mutate());
+			template.totalScore = 0;
+			nextPopulation.add(template);
+		}
+		for(int i = 0; i < populationSize; i++)
+		{
+			nextPopulation.get(i).index = i;
 		}
 		
 		population = nextPopulation;
