@@ -4,39 +4,45 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
+import javax.swing.*;
+import java.awt.*;
 
-public class GameRunner
+public class GameRunner implements Runnable
 {
 	// Simulation parameters
-	public static int roundsPerGame = 50;
-	public static int populationSize = 100; // Must be even!
+	public int roundsPerGame = 50;
+	public int populationSize = 100; // Must be even!
 	public static int fps = 0;
 	
 	// Scores
-	public static double mutualCooperationScore = 3;
-	public static double mutualDefectionScore = 1;
-	public static double loseScore = 0;
-	public static double winScore = 5;
+	public double mutualCooperationScore = 3;
+	public double mutualDefectionScore = 1;
+	public double loseScore = 0;
+	public double winScore = 5;
 
 	// Game parameters
-	public static double noise = 0.01;
+	public double noise = 0;
 	
 	// Strategy parameters
-	public static double strategyMutationRate = 0.01;
+	public double strategyMutationRate = 0.01;
 	
 	// Starting memory parameters
-	public static int startingMemoryMinSize = 1;
-	public static int startingMemoryMaxSize = 5;
-	public static double startingMemorySizeMutationRate = 0;
-	public static double startingMemoryMutationRate = 0;
+	public int startingMemoryMinSize = 1;
+	public int startingMemoryMaxSize = 5;
+	public double startingMemorySizeMutationRate = 0;
+	public double startingMemoryMutationRate = 0;
 
 	// Override parameters
-	public static double overrideMutationRate = 0.01;
+	public double overrideMutationRate = 0.01;
+
+	public boolean keepRunning = true;
 
 	public AgentComparator ac;
 
+	JTextArea outputLog;
 
-	public static int roundNumber = 0;
+
+	public int roundNumber = 0;
 	private ArrayList<Agent> population;
 
 	// Methods
@@ -60,13 +66,36 @@ public class GameRunner
 		return histogram;
 	}
 
+	public void run()
+	{
+		keepRunning = true;
+		while(true)
+		{
+			while(keepRunning)
+			{
+				tick();
+			}
+			while(!keepRunning)
+			{
+				try
+				{
+					Thread.sleep(1000);
+				}
+				catch(Exception e)
+				{
+
+				}
+			}
+		}
+	}
+
 	public static void main(String[] args)
 	{
 		GameRunner runner = new GameRunner();
 
 		while(true)
 		{
-			runner.renderStats();
+			System.out.print(runner.renderStats());
 			runner.populationStep();
 
 			if(fps > 0)
@@ -81,19 +110,49 @@ public class GameRunner
 		}
 	}
 
-	public void renderStats()
+	public void tick()
 	{
-		for (Map.Entry<String, Integer> entry : populationHistogram().entrySet())
+		if(outputLog != null)
 		{
-			if(entry.getValue()/(double) populationSize > 0.01)
-			{
-				System.out.println(Integer.toString(roundNumber) + "\t" + entry.getKey() + "\t" + entry.getValue());
-			}
+			outputLog.append(renderStats());
 		}
+		populationStep();
 	}
 
+	public String renderStats()
+	{
+		String out = "";
+		for (Map.Entry<String, Integer> entry : populationHistogram().entrySet())
+		{
+			if(true || entry.getValue()/(double) populationSize > 0)
+			{
+				out += Integer.toString(roundNumber) + "\t" + entry.getKey() + "\t" + entry.getValue() + "\n";
+			}
+		}
+
+		return out;
+	}
+	
 	public GameRunner()
 	{
+		this(null, 100, 50, 0.01, 0.01, 1, 10, 0.01, 0.01, 0.01, new GameAction[] {GameAction.COOPERATE}, new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE});
+	}
+
+	public GameRunner(JTextArea textarea, int rpg, int ps, double n, double smr, int smmins, int smmaxs, double smsmut, double smmr, double omr, GameAction[] smchr, GameAction[] scrh)
+	{
+		// Ugly, the GameRunner was initially concieved to be the main class.
+		outputLog = textarea;
+		
+		roundsPerGame = rpg;
+		populationSize = ps;
+		noise = n;
+		strategyMutationRate = smr;
+		startingMemoryMinSize = smmins;
+		startingMemoryMaxSize = smmaxs;
+		startingMemorySizeMutationRate = smsmut;
+		startingMemoryMutationRate = smmr;
+		overrideMutationRate = omr;
+
 		ac = new AgentComparator();
 		population = new ArrayList<Agent>(populationSize);
 		Agent a;
@@ -129,6 +188,7 @@ public class GameRunner
 
 			population.add(a);
 		}
+
 	}
 
 	public void evaluatePopulation()

@@ -26,21 +26,17 @@ public class Agent implements Cloneable
 	public int computeHistoryId(GameAction[] history, int roundNumber, boolean firstPlayerPerspective)
 	{
 		int historySize = (int) Math.round(Math.log(strategy.size()) / Math.log(2));
-		
 		int id = 0;
 		int pos;
-
 		for(int i = 0; i < historySize; i++)
 		{
 			if(firstPlayerPerspective)
 			{
 				pos = (i%2 == 0) ? (roundNumber-1) * 2 - 2*i : (roundNumber-1) * 2 + 1 - 2*i;
-	//			System.out.println("First player, round " + roundNumber + ", history: " + Arrays.toString(history) + ", pos: " + pos);
 			}
 			else
 			{
 				pos = (i%2 == 0) ? (roundNumber-1) * 2 - 2*i + 1 : (roundNumber-1) * 2 - 2*i;
-	//			System.out.println("Second player, round " + roundNumber + ", history: " + Arrays.toString(history) + ", pos: " + pos);
 			}
 			if(pos >= 0)
 			{
@@ -54,63 +50,6 @@ public class Agent implements Cloneable
 				id += Math.pow(2, i);
 			}
 		}
-
-		/*
-		if(firstPlayerPerspective)
-		{
-			for(int i = 0; i < historySize; i++)
-			{
-				if((pos = roundNumber*2 - i) >= 0)
-				{
-					System.out.println("Looking in history at position " + pos);
-					if(history[pos] == GameAction.COOPERATE)
-					{
-						id += Math.pow(2, i);
-					}
-				}
-				else if(startingMemory.chromosome[i] == GameAction.COOPERATE)
-				{
-					System.out.println("Looking in starting memory at " + i);
-					id += Math.pow(2, i);
-				}
-				else
-				{
-					System.out.println("Looking in starting memory at " + i);
-				}
-			}
-			System.out.println("From first player perspective, history " + Arrays.toString(history) + " decodes to ID " + id);
-		}
-		else
-		{
-			for(int i = 0; i < historySize; i++)
-			{
-				if((pos = roundNumber*2 -1 - i) >= 0)
-				{
-					if(pos % 2 == 0)
-					{
-						if(history[pos+1] == GameAction.COOPERATE)
-						{
-							id += Math.pow(2, i);
-						}
-					}
-					else
-					{
-						if(history[pos-1] == GameAction.COOPERATE)
-						{
-							id += Math.pow(2, i);
-						}
-					}
-				}
-				else if(startingMemory.chromosome[i] == GameAction.COOPERATE)
-				{
-					id += Math.pow(2, i);
-				}
-			}
-			System.out.println("From second player perspective, history " + Arrays.toString(history) + " decodes to ID " + id);
-		}
-		*/
-
-
 		return id;
 	}
 
@@ -190,5 +129,29 @@ public class Agent implements Cloneable
 		}
 
 		return this;
+	}
+
+	public static GameAction[] parseGameActionArray(String chromosome) throws IllegalArgumentException
+	{
+		GameAction[] actions = new GameAction[chromosome.length()];
+		for(int i = 0; i < chromosome.length(); i++)
+		{
+			switch(chromosome.charAt(i))
+			{
+				case 'C':
+						actions[i] = GameAction.COOPERATE;
+						break;
+				case 'D':
+						actions[i] = GameAction.DEFECT;
+						break;
+				case 'S':
+						actions[i] = GameAction.STRATEGY;
+						break;
+				default:
+						throw new IllegalArgumentException("Illegal character in genome string");
+			}
+		}
+
+		return actions;
 	}
 }
