@@ -159,10 +159,8 @@ public class GameRunner implements Runnable
 
 		Chromosome strategyChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE, GameAction.DEFECT});
 		strategyChromosome.mutationRate = strategyMutationRate;
-		strategyChromosome.chromosome = new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE, GameAction.DEFECT, GameAction.COOPERATE, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.COOPERATE, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.DEFECT, GameAction.COOPERATE };
-
-		//strategyChromosome.chromosome = new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE};
-		
+		strategyChromosome.chromosome = scrh;
+			
 		Chromosome overrideChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE, GameAction.DEFECT, GameAction.STRATEGY});
 		overrideChromosome.maxLength = roundsPerGame;
 		overrideChromosome.minLength = roundsPerGame;
@@ -176,8 +174,8 @@ public class GameRunner implements Runnable
 		Chromosome startingMemoryChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE});
 		startingMemoryChromosome.mutationRate = startingMemoryMutationRate;
 		//startingMemoryChromosome.chromosome = new GameAction[]{GameAction.COOPERATE};
-		startingMemoryChromosome.chromosome = new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE, GameAction.COOPERATE, GameAction.COOPERATE };
-
+		startingMemoryChromosome.chromosome = smchr;
+			
 		for(int i = 0; i < populationSize; i++)
 		{
 			a = new Agent(noise, startingMemorySizeMutationRate, startingMemoryMinSize, startingMemoryMaxSize, i);
