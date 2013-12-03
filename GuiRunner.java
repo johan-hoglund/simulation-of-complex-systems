@@ -137,7 +137,8 @@ public class GuiRunner extends JFrame
 
 		
 		outputLog = new JTextArea(20, 100);
-		outputPane.add(outputLog);
+		JScrollPane sp = new JScrollPane(outputLog);
+		outputPane.add(sp);
 
 
 		add(settings, BorderLayout.NORTH);
