@@ -22,7 +22,7 @@ public class GuiRunner extends JFrame
 	
 	JTextField overrideChromosomeInput;
 	
-	JTextField startingMemoryMutationRateInput;
+	JTextField replacementFractionInput;
 	JTextField startingMemoryInput;
 	JTextField strategyChromosomeInput;
 
@@ -96,7 +96,8 @@ public class GuiRunner extends JFrame
 				int smmaxs = Integer.parseInt(strategyMemoryMaxSizeInput.getText());
 				
 				double smsmut = Double.parseDouble(strategyMemorySizeMutationRateInput.getText());
-				double smmr = Double.parseDouble(startingMemoryMutationRateInput.getText());
+
+				int rc = (int) Math.round(Double.parseDouble(replacementFractionInput.getText()) * ps);
 				
 				double omr = Double.parseDouble(overrideMutationRateInput.getText());
 				
@@ -104,7 +105,7 @@ public class GuiRunner extends JFrame
 				GameAction[] schr = Agent.parseGameActionArray(strategyChromosomeInput.getText());
 				GameAction[] ochr = Agent.parseGameActionArray(overrideChromosomeInput.getText());
 
-				runner = new GameRunner(outputLog, rpg, ps, n, smr, smmins, smmaxs, smsmut, smmr, omr, smchr, schr, ochr);
+				runner = new GameRunner(outputLog, rpg, ps, n, smr, smmins, smmaxs, smsmut, 0, omr, smchr, schr, ochr, rc);
 			}
 			catch(Exception e)
 			{
@@ -167,7 +168,7 @@ public class GuiRunner extends JFrame
 		strategyMemorySizeMutationRateInput = new JTextField("0.01");
 		strategyChromosomeInput = new JTextField("DC");
 		startingMemoryInput = new JTextField("C");
-		startingMemoryMutationRateInput = new JTextField("0");
+		replacementFractionInput = new JTextField("0.2");
 		overrideChromosomeInput = new JTextField("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
 
 
@@ -191,13 +192,13 @@ public class GuiRunner extends JFrame
 		settings.add(startingMemoryInput);
 		
 		
-		settings.add(new JLabel("Starting memorey mutation rate"));
+		settings.add(new JLabel("Replacement fraction (0 - 0.5)"));
 		settings.add(new JLabel("Override chromosome"));
 		settings.add(new JLabel(""));
 		settings.add(new JLabel(""));
 		settings.add(new JLabel(""));
 		
-		settings.add(startingMemoryMutationRateInput);
+		settings.add(replacementFractionInput);
 		settings.add(overrideChromosomeInput);
 		
 		settings.add(stepControl);

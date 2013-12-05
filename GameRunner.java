@@ -35,6 +35,8 @@ public class GameRunner implements Runnable
 	// Override parameters
 	public double overrideMutationRate = 0.01;
 
+	public int replacementCount = 1;
+
 	public boolean keepRunning = true;
 
 	public AgentComparator ac;
@@ -135,10 +137,10 @@ public class GameRunner implements Runnable
 	
 	public GameRunner()
 	{
-		this(null, 100, 1, 0.01, 0.01, 1, 10, 0.01, 0.01, 0.01, new GameAction[] {GameAction.COOPERATE}, new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE}, new GameAction[] {GameAction.STRATEGY});
+		this(null, 100, 1, 0.01, 0.01, 1, 10, 0.01, 0.01, 0.01, new GameAction[] {GameAction.COOPERATE}, new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE}, new GameAction[] {GameAction.STRATEGY}, 20);
 	}
 
-	public GameRunner(JTextArea textarea, int rpg, int ps, double n, double smr, int smmins, int smmaxs, double smsmut, double smmr, double omr, GameAction[] smchr, GameAction[] scrh, GameAction[] ochr)
+	public GameRunner(JTextArea textarea, int rpg, int ps, double n, double smr, int smmins, int smmaxs, double smsmut, double smmr, double omr, GameAction[] smchr, GameAction[] scrh, GameAction[] ochr, int rc)
 	{
 		// Ugly, the GameRunner was initially concieved to be the main class.
 		outputLog = textarea;
@@ -152,6 +154,8 @@ public class GameRunner implements Runnable
 		startingMemorySizeMutationRate = smsmut;
 		startingMemoryMutationRate = smmr;
 		overrideMutationRate = omr;
+
+		replacementCount = rc;
 
 		ac = new AgentComparator();
 		population = new ArrayList<Agent>(populationSize);
@@ -207,23 +211,22 @@ public class GameRunner implements Runnable
 		evaluatePopulation();
 		Collections.sort(population, ac);
 
-		
-		for(int i = 0; i < populationSize; i++)
-		{
-	//		System.out.println("Rank " + i + ": " + population.get(i).genomeString());
-		}
-		
 		ArrayList<Agent> nextPopulation = new ArrayList<Agent>(populationSize);
 		Agent template;
-		for(int i = 0; i < populationSize / 2; i++)
+
+		for(int i = 0; i < replacementCount; i++)
 		{
-			//System.out.println("Trasnfering to next population: " + population.get(i).genomeString());
 			template = population.get(i);
-			
 			nextPopulation.add(template.clone().mutate());
 			template.totalScore = 0;
 			nextPopulation.add(template);
 		}
+		
+		for(int i = replacementCount; i < populationSize - replacementCount; i++)
+		{
+			nextPopulation.add(population.get(i).clone().mutate());
+		}
+
 		for(int i = 0; i < populationSize; i++)
 		{
 			nextPopulation.get(i).index = i;
