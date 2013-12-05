@@ -191,7 +191,7 @@ public class GuiRunner extends JFrame
 		settings.add(startingMemoryInput);
 		
 		
-		settings.add(new JLabel("Starting memory mutation rate"));
+		settings.add(new JLabel("Starting memorey mutation rate"));
 		settings.add(new JLabel("Override chromosome"));
 		settings.add(new JLabel(""));
 		settings.add(new JLabel(""));
