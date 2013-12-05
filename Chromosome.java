@@ -58,10 +58,10 @@ public class Chromosome implements Cloneable
 					out[i] = 'S';
 					break;
 				case COOPERATE:
-					out[i] += 'C';
+					out[i] += '-';
 					break;
 				case DEFECT:
-					out[i] += 'D';
+					out[i] += '.';
 					break;
 			}
 		}
