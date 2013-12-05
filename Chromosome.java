@@ -49,21 +49,22 @@ public class Chromosome implements Cloneable
 
 	public String toString()
 	{
-		char[] out = new char[chromosome.length];
+		char[] out = new char[chromosome.length*2];
 		for(int i = 0; i < chromosome.length; i++)
 		{
 			switch(chromosome[i])
 			{
 				case STRATEGY:
-					out[i] = 'S';
+					out[2*i] = 'S';
 					break;
 				case COOPERATE:
-					out[i] += '-';
+					out[2*i] += '-';
 					break;
 				case DEFECT:
-					out[i] += '.';
+					out[2*i] += '.';
 					break;
 			}
+			out[2*i+1] += ' ';
 		}
 		return new String(out);
 	}
