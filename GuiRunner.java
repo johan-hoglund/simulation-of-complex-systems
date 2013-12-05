@@ -167,7 +167,7 @@ public class GuiRunner extends JFrame
 		strategyMemorySizeMutationRateInput = new JTextField("0.01");
 		strategyChromosomeInput = new JTextField("DC");
 		startingMemoryInput = new JTextField("C");
-		startingMemoryMutationRateInput = new JTextField("0.01");
+		startingMemoryMutationRateInput = new JTextField("0");
 		overrideChromosomeInput = new JTextField("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
 
 
