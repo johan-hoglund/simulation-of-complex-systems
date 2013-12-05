@@ -135,10 +135,10 @@ public class GameRunner implements Runnable
 	
 	public GameRunner()
 	{
-		this(null, 100, 50, 0.01, 0.01, 1, 10, 0.01, 0.01, 0.01, new GameAction[] {GameAction.COOPERATE}, new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE});
+		this(null, 100, 1, 0.01, 0.01, 1, 10, 0.01, 0.01, 0.01, new GameAction[] {GameAction.COOPERATE}, new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE}, new GameAction[] {GameAction.STRATEGY});
 	}
 
-	public GameRunner(JTextArea textarea, int rpg, int ps, double n, double smr, int smmins, int smmaxs, double smsmut, double smmr, double omr, GameAction[] smchr, GameAction[] scrh)
+	public GameRunner(JTextArea textarea, int rpg, int ps, double n, double smr, int smmins, int smmaxs, double smsmut, double smmr, double omr, GameAction[] smchr, GameAction[] scrh, GameAction[] ochr)
 	{
 		// Ugly, the GameRunner was initially concieved to be the main class.
 		outputLog = textarea;
@@ -166,10 +166,7 @@ public class GameRunner implements Runnable
 		overrideChromosome.minLength = roundsPerGame;
 		overrideChromosome.mutationRate = overrideMutationRate;
 		overrideChromosome.chromosome = new GameAction[roundsPerGame];
-		for(int i = 0; i < roundsPerGame; i++)
-		{
-			overrideChromosome.chromosome[i] = GameAction.STRATEGY;
-		}
+		overrideChromosome.chromosome = ochr;
 
 		Chromosome startingMemoryChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE});
 		startingMemoryChromosome.mutationRate = startingMemoryMutationRate;

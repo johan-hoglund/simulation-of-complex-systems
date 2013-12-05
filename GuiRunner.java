@@ -20,6 +20,8 @@ public class GuiRunner extends JFrame
 	JTextField strategyMemoryMaxSizeInput;
 	JTextField strategyMemorySizeMutationRateInput;
 	
+	JTextField overrideChromosomeInput;
+	
 	JTextField startingMemoryMutationRateInput;
 	JTextField startingMemoryInput;
 	JTextField strategyChromosomeInput;
@@ -100,8 +102,9 @@ public class GuiRunner extends JFrame
 				
 				GameAction[] smchr = Agent.parseGameActionArray(startingMemoryInput.getText());
 				GameAction[] schr = Agent.parseGameActionArray(strategyChromosomeInput.getText());
+				GameAction[] ochr = Agent.parseGameActionArray(overrideChromosomeInput.getText());
 
-				runner = new GameRunner(outputLog, rpg, ps, n, smr, smmins, smmaxs, smsmut, smmr, omr, smchr, schr);
+				runner = new GameRunner(outputLog, rpg, ps, n, smr, smmins, smmaxs, smsmut, smmr, omr, smchr, schr, ochr);
 			}
 			catch(Exception e)
 			{
@@ -121,7 +124,7 @@ public class GuiRunner extends JFrame
 		setVisible(true);
 		setSize(500, 500);
 		
-		JPanel settings = new JPanel(new GridLayout(4, 5));
+		JPanel settings = new JPanel(new GridLayout(6, 5));
 		startStopControl = new JButton("Start");
 		JButton stepControl = new JButton("Step");
 		
@@ -149,8 +152,7 @@ public class GuiRunner extends JFrame
 		settings.add(new JLabel("Noise"));
 		settings.add(new JLabel("Strategy mutation rate"));
 		settings.add(new JLabel("Override mutation rate"));
-		settings.add(new JLabel("Strategy memory min size"));
-		settings.add(new JLabel("Strategy memory max size"));
+
 
 
 		
@@ -166,6 +168,7 @@ public class GuiRunner extends JFrame
 		strategyChromosomeInput = new JTextField("DC");
 		startingMemoryInput = new JTextField("C");
 		startingMemoryMutationRateInput = new JTextField("0.01");
+		overrideChromosomeInput = new JTextField("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
 
 
 		settings.add(roundsPerGameInput);
@@ -173,26 +176,34 @@ public class GuiRunner extends JFrame
 		settings.add(noiseInput);
 		settings.add(strategyMutationRateInput);
 		settings.add(overrideMutationRateInput);
-		settings.add(strategyMemoryMinSizeInput);
-		settings.add(strategyMemoryMaxSizeInput);
 		
 		settings.add(new JLabel("Strategy memory size mutation rate"));
+		settings.add(new JLabel("Strategy memory min size"));
+		settings.add(new JLabel("Strategy memory max size"));
 		settings.add(new JLabel("Strategy chromosome"));
 		settings.add(new JLabel("Starting memory"));
-		settings.add(new JLabel("Starting memory mutation rate"));
-		settings.add(new JLabel(""));
-		settings.add(new JLabel(""));
-		settings.add(new JLabel(""));
+		
 		
 		settings.add(strategyMemorySizeMutationRateInput);
+		settings.add(strategyMemoryMinSizeInput);
+		settings.add(strategyMemoryMaxSizeInput);
 		settings.add(strategyChromosomeInput);
 		settings.add(startingMemoryInput);
-		settings.add(startingMemoryMutationRateInput);
 		
+		
+		settings.add(new JLabel("Starting memory mutation rate"));
+		settings.add(new JLabel("Override chromosome"));
+		settings.add(new JLabel(""));
+		settings.add(new JLabel(""));
+		settings.add(new JLabel(""));
+		
+		settings.add(startingMemoryMutationRateInput);
+		settings.add(overrideChromosomeInput);
 		
 		settings.add(stepControl);
 		settings.add(resetControl);
 		settings.add(startStopControl);
+		
 	}
 
 	private void tick()
