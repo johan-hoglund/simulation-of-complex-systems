@@ -1,3 +1,8 @@
+// This is a more or less generic class to handle the starting memory, the override and the strategy
+// The toString() methods handles rendering of the chromosome, i.e. it controls which characters are displayed
+// for which action
+//
+// If you want to change the game logic, this is most probably *not* the place to do it :)
 public class Chromosome implements Cloneable
 {
 	GameAction[] geneSpace;

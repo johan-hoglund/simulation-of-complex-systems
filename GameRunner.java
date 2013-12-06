@@ -1,3 +1,15 @@
+// Runs the whole simulation.
+// Run by repeated calls to the tick() method, which prints statistics and calls populationStep().
+//
+// population is a list of all Agents, a call to evaluatePopulation() runs all agents against
+// each others, total scores for each agent is then available in Agent.totalScore.
+// see populationStep() for details on how new populations are formed.
+//
+// Some 20 lines down the code, there are definitions for the scoring.
+// Most settings, for example roundsPerGame and other game-related settings that are defined
+// here are overwritten by GuiRunner, so no need to think about their values here.
+//
+
 import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -206,6 +218,23 @@ public class GameRunner implements Runnable
 		}
 	}
 
+// populationStep() handled the transfering of agents (and their genomes) between generations
+// First, all agents are evaluated with evaluatePopulation(), which runs all agents against each other and
+// sets Agent.totalScore appropriately.
+// Second, agents are sorted by their score, highest to lowest.
+// Third, a new (empty) population called nextPopulation is created
+// Fourth, the first (2 * <replacementCount>) agents are copied over to the new generation,
+// as they are copied, they are also mutated.
+// Fifth, remaining agents are copied and mutated to fill up nextPopulation to the appropriate number of agents.
+
+// Note, when calling clone() on an agent, its totalScore is reset to zero.
+// The "best" agents are transferred twice to the new generation, *however*
+// 	One instance is cloned (by a call to Agent.clone()), the other is instead moved. We are thus using
+// 	the *same* agent, why we need to reset the score manually
+//
+// Should you wish to keep some agents without mutation, simply comment out the line:
+//	template.mutate(), which would keep the original agent without mutation
+	
 	public void populationStep()
 	{
 		evaluatePopulation();
@@ -219,6 +248,7 @@ public class GameRunner implements Runnable
 			template = population.get(i);
 			nextPopulation.add(template.clone().mutate());
 			template.totalScore = 0;
+			template.mutate();
 			nextPopulation.add(template);
 		}
 		
@@ -236,10 +266,9 @@ public class GameRunner implements Runnable
 		roundNumber++;
 	}
 
-
+	// Plays all roundsPerGame rounds between two players, increases their totalScore accordingly
 	public void playGame(Agent player1, Agent player2)
 	{
-		//System.out.println("\nPlaying " + player1 + " to " + player2);
 		GameAction p1move, p2move;
 		GameAction[] history = new GameAction[roundsPerGame*2];
 
@@ -255,7 +284,6 @@ public class GameRunner implements Runnable
 			history[2*i+1] = p2move;
 			
 
-			//System.out.println("Player 1 score " + player1.totalScore + ", player 2 score " + player2.totalScore);
 			if(p1move == GameAction.COOPERATE && p2move == GameAction.COOPERATE)
 			{
 				//System.out.println("Both cooperated");
@@ -264,27 +292,20 @@ public class GameRunner implements Runnable
 			}
 			else if(p1move == GameAction.COOPERATE && p2move == GameAction.DEFECT)
 			{
-			//	System.out.println("Player 1 cooperated, player 2 defected, player 1 gets score " + loseScore + ", player 2 gets score " + winScore);
 				player1.giveScore(loseScore);
 				player2.giveScore(winScore);
 			}
 			else if(p1move == GameAction.DEFECT && p2move == GameAction.COOPERATE)
 			{
-			//	System.out.println("Player 1 defected, player 2 cooperated, player 1 gets score " + winScore + ", player 2 gets score " + loseScore);
 				player1.giveScore(winScore);
 				player2.giveScore(loseScore);
 			}
 			else if(p1move == GameAction.DEFECT && p2move == GameAction.DEFECT)
 			{
-				//System.out.println("Both defected");
 				player1.giveScore(mutualDefectionScore);
 				player2.giveScore(mutualDefectionScore);
 			}
-		//	System.out.println("Player 1 score " + player1.totalScore + ", player 2 score " + player2.totalScore);
 		}
-
-		//System.out.println("After " + roundsPerGame + " iterations, " + player1.genomeString() + " has score " + player1.matchScore + ", " + player2.genomeString() + " has score " + player2.matchScore);
-		//System.out.println("History: " + Arrays.toString(history));
 	}	
 }
 

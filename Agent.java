@@ -1,3 +1,7 @@
+// Represents one player,
+// note the mutate() method
+// Also see the clone() method, it resets the totalScore for the cloned version
+
 import java.util.Arrays;
 
 public class Agent implements Cloneable

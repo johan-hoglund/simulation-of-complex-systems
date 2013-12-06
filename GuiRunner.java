@@ -1,3 +1,6 @@
+// This is the program that is started, this is mainly about the graphical components (window, buttons, fields).
+// The actual program is started in the routine initializeRunner() where it rays GameRunner runner = new GameRunner()...
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
