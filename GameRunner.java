@@ -184,8 +184,9 @@ public class GameRunner implements Runnable
 		overrideChromosome.chromosome = new GameAction[roundsPerGame];
 		overrideChromosome.chromosome = ochr;
 
-		Chromosome startingMemoryChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE, GameAction.COOPERATE});
+		Chromosome startingMemoryChromosome = new Chromosome(new GameAction[]{GameAction.COOPERATE, GameAction.DEFECT});
 		startingMemoryChromosome.mutationRate = startingMemoryMutationRate;
+		System.out.println("Setting starting memory mutation rate to " + startingMemoryMutationRate);
 		//startingMemoryChromosome.chromosome = new GameAction[]{GameAction.COOPERATE};
 		startingMemoryChromosome.chromosome = smchr;
 			

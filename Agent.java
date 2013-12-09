@@ -15,6 +15,7 @@ public class Agent implements Cloneable
 	public double startingMemorySizeMutationRate;
 	public double startingMemoryMinSize;
 	public double startingMemoryMaxSize;
+	public double startingMemoryMutationRate;
 	public int index;
 
 
@@ -114,6 +115,7 @@ public class Agent implements Cloneable
 	{
 		strategy.mutate();
 		override.mutate();
+		startingMemory.mutate();
 
 		if(startingMemory.size() < startingMemoryMaxSize)
 		{

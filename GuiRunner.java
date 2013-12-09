@@ -1,6 +1,7 @@
 // This is the program that is started, this is mainly about the graphical components (window, buttons, fields).
 // The actual program is started in the routine initializeRunner() where it rays GameRunner runner = new GameRunner()...
 
+import java.io.PrintWriter;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -24,6 +25,7 @@ public class GuiRunner extends JFrame
 	JTextField strategyMemorySizeMutationRateInput;
 	
 	JTextField overrideChromosomeInput;
+	JTextField startingMemoryMutationRateInput;
 	
 	JTextField replacementFractionInput;
 	JTextField startingMemoryInput;
@@ -56,6 +58,35 @@ public class GuiRunner extends JFrame
 		{
 			initializeRunner();
 			guiRunner.tick();
+		}
+	}
+
+	private class BatchListener implements ActionListener
+	{
+		GuiRunner guiRunner;
+		public BatchListener(GuiRunner runner)
+		{
+			guiRunner = runner;
+		}
+		public void actionPerformed(ActionEvent e)
+		{
+			try
+			{
+				PrintWriter outWriter = new PrintWriter("outfile.txt");
+				for(int i = 0; i < 20; i++)
+				{
+					initializeRunner();
+					for(int j = 0; j < 2000; j++)
+					{
+						outWriter.println(runner.renderStats());
+						guiRunner.tick();
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				System.out.println(ex.getMessage());
+			}
 		}
 	}
 
@@ -99,6 +130,8 @@ public class GuiRunner extends JFrame
 				int smmaxs = Integer.parseInt(strategyMemoryMaxSizeInput.getText());
 				
 				double smsmut = Double.parseDouble(strategyMemorySizeMutationRateInput.getText());
+				
+				double smmr = Double.parseDouble(startingMemoryMutationRateInput.getText());
 
 				int rc = (int) Math.round(Double.parseDouble(replacementFractionInput.getText()) * ps);
 				
@@ -108,7 +141,7 @@ public class GuiRunner extends JFrame
 				GameAction[] schr = Agent.parseGameActionArray(strategyChromosomeInput.getText());
 				GameAction[] ochr = Agent.parseGameActionArray(overrideChromosomeInput.getText());
 
-				runner = new GameRunner(outputLog, rpg, ps, n, smr, smmins, smmaxs, smsmut, 0, omr, smchr, schr, ochr, rc);
+				runner = new GameRunner(outputLog, rpg, ps, n, smr, smmins, smmaxs, smsmut, smmr, omr, smchr, schr, ochr, rc);
 			}
 			catch(Exception e)
 			{
@@ -128,15 +161,16 @@ public class GuiRunner extends JFrame
 		setVisible(true);
 		setSize(500, 500);
 		
-		JPanel settings = new JPanel(new GridLayout(6, 5));
+		JPanel settings = new JPanel(new GridLayout(7, 5));
 		startStopControl = new JButton("Start");
 		JButton stepControl = new JButton("Step");
-		
 		JButton resetControl = new JButton("Reset");
+		JButton batchControl = new JButton("Batch run");
 
 		stepControl.addActionListener(new StepListener(this));
 		startStopControl.addActionListener(new StartStopListener(this));
 		resetControl.addActionListener(new ResetListener(this));
+		batchControl.addActionListener(new BatchListener(this));
 
 		JPanel outputPane = new JPanel();
 		
@@ -173,6 +207,7 @@ public class GuiRunner extends JFrame
 		startingMemoryInput = new JTextField("C");
 		replacementFractionInput = new JTextField("0.2");
 		overrideChromosomeInput = new JTextField("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+		startingMemoryMutationRateInput = new JTextField("0.01");
 
 
 		settings.add(roundsPerGameInput);
@@ -197,16 +232,18 @@ public class GuiRunner extends JFrame
 		
 		settings.add(new JLabel("Replacement fraction (0 - 0.5)"));
 		settings.add(new JLabel("Override chromosome"));
-		settings.add(new JLabel(""));
+		settings.add(new JLabel("Starting memory mutation rate"));
 		settings.add(new JLabel(""));
 		settings.add(new JLabel(""));
 		
 		settings.add(replacementFractionInput);
 		settings.add(overrideChromosomeInput);
+		settings.add(startingMemoryMutationRateInput);
 		
 		settings.add(stepControl);
 		settings.add(resetControl);
 		settings.add(startStopControl);
+		settings.add(batchControl);
 		
 	}
 
